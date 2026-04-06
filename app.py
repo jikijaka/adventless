@@ -1,7 +1,5 @@
 from flask import Flask, jsonify, request
-import sys
 import random
-
 
 app = Flask(__name__)
 
@@ -32,13 +30,8 @@ def image_skill():
         }
     })
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
-
-    return jsonify(response)
 @app.route('/inquiry', methods=["GET", "POST"])
-def index():
-    # 사용자 발화 가져오기
+def inquiry():
     body = request.get_json(silent=True) or {}
     user_text = ""
     try:
@@ -46,14 +39,22 @@ def index():
     except:
         pass
 
-    # 응답 메시지 설정
+    if "채팅상담" in user_text:
+        text = "상담사를 연결 중입니다. 잠시만 기다려주세요! 🙏"
+    elif "견적서" in user_text:
+        text = "견적서 요청을 접수했습니다.\n담당자가 곧 연락드릴게요 📄"
+    elif "도입 문의" in user_text:
+        text = "도입 문의 감사합니다!\n어떤 서비스에 관심 있으신가요? 🏢"
+    else:
+        text = "안녕하세요! 문의해 주셔서 감사합니다 😊\n잠재고객 확보가 어려우셨나요?\n저희가 함께합니다!"
+
     response = {
         "version": "2.0",
         "template": {
             "outputs": [
                 {
                     "simpleText": {
-                        "text": "안녕하세요! 문의해 주셔서 감사합니다 😊\n잠재고객 확보가 어려우셨나요?\n저희가 함께합니다!"
+                        "text": text
                     }
                 }
             ],
@@ -76,5 +77,7 @@ def index():
             ]
         }
     }
+    return jsonify(response)  # ✅ 여기가 핵심!
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)  # ✅ 맨 마지막에 한 번만
